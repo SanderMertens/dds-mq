@@ -1,0 +1,9 @@
+#include "dds_dcps.idl"
+
+module mq {
+    struct order {
+        string topic;
+        DDS::Duration_t timestamp;
+    };
+};
+
