@@ -40,6 +40,11 @@ public:
         m_writer.write_w_timestamp(sample, t);
         m_orderWriter << ::mq::order(m_topicName, t);
     }
+
+    void operator<< (T sample) {
+        this.write(sample);
+    }
+
 private:
     std::string m_topicName;
     dds::pub::DataWriter<T> m_writer;

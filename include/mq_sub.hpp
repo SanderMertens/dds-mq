@@ -13,7 +13,6 @@ public:
 class Subscriber {
 public:
     Subscriber(domain::DomainParticipant dp, std::string name);
-    void add_reader(anyreader reader);
 };
 
 template <class T>
@@ -25,7 +24,7 @@ class Handler {
 template <class T>
 class Reader : public anyreader {
 public:
-    Reader(subscriber sub, handler<T> handler);
+    Reader(Subscriber sub, handler<T> handler);
 private:
     handler<T> m_handler;
 };
