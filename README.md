@@ -1,4 +1,4 @@
-# dds-queue
+# ddsmq
 A type safe, brokerless queue built with DDS
 
 ## Description
