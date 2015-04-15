@@ -1,5 +1,5 @@
 
-#include "mq_DCPS.h"
+#include "mq_DCPS.hpp"
 
 namespace dds {
 namespace mq {
@@ -22,11 +22,11 @@ class Handler {
 };
 
 template <class T>
-class Reader : public anyreader {
+class Reader : public AnyReader {
 public:
-    Reader(Subscriber sub, handler<T> handler);
+    Reader(Subscriber sub, Handler<T> handler);
 private:
-    handler<T> m_handler;
+    Handler<T> m_handler;
 };
 
 }

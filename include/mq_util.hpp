@@ -2,6 +2,6 @@
 
 namespace dds {
 namespace mq {
-    dds::core::Duration now();
+    dds::core::Time now();
 }
 }

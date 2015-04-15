@@ -1,0 +1,7 @@
+module Hello {
+    struct World {
+        long id;
+        string name;
+    };
+#pragma keylist World
+};

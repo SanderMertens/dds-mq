@@ -1,5 +1,5 @@
 #include "mq.hpp"
-#include "Hello_DCPS.h"
+#include "Hello_DCPS.hpp"
 
 int main(int argc, char *arv[])
 {
@@ -7,8 +7,7 @@ int main(int argc, char *arv[])
     dds::mq::Publisher pub( dp, "myqueue" );
     dds::mq::Writer<Hello::World> writer( pub );
 
-    Hello::World sample( 0, "Hello World" );
-    writer << sample;
+    writer << Hello::World( 0, "Hello World" );
     
     return 0;
 }

@@ -3,8 +3,8 @@
 namespace dds {
 namespace mq {
 
-dds::core::Duration now() {
-    return dds::core::Duration(0, 0);
+dds::core::Time now() {
+    return dds::core::Time(0, 0);
 }
 
 }
