@@ -1,7 +1,7 @@
 module Hello {
     struct World {
         long id;
-        string name;
+        string value;
     };
 #pragma keylist World
 };

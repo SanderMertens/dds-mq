@@ -1,7 +1,10 @@
-#include "mq_DCPS.hpp"
+#include <string>
 
 namespace dds {
 namespace mq {
-    dds::core::Time now();
+
+std::string type_name_to_topic(std::string type_name);
+
 }
 }
+

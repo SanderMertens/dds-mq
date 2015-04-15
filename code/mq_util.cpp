@@ -3,8 +3,14 @@
 namespace dds {
 namespace mq {
 
-dds::core::Time now() {
-    return dds::core::Time(0, 0);
+std::string type_name_to_topic(std::string type_name) {
+    size_t result;
+
+    while ((result = type_name.find("::")) != std::string::npos) {
+        type_name.replace(result, 2, "_");
+    }
+
+    return type_name;
 }
 
 }
