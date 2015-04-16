@@ -1,6 +1,7 @@
 #include "mq_DCPS.hpp"
 #include "mq_util.hpp"
 #include <vector>
+#include <map>
 
 namespace dds {
 namespace mq {
@@ -8,7 +9,7 @@ namespace mq {
 class AnyReader {
 public:
     AnyReader(std::string topicName);
-    virtual void take(int count);
+    virtual void take(int count) = 0;
 protected:
     std::string m_topicName;
 };
@@ -18,18 +19,16 @@ public:
     Subscriber(domain::DomainParticipant dp, std::string name);
     domain::DomainParticipant get_participant();
     sub::Subscriber get_subscriber();
-    void add_reader(AnyReader reader);
+    void add_reader(std::string topic, AnyReader *reader);
     void dispatch();
+    void operator() (dds::sub::DataReader< ::mq::order >& dr);
+    AnyReader* reader(std::string topic);
 private:
     domain::DomainParticipant m_participant;
     sub::Subscriber m_subscriber;
     std::string m_name;
+    std::map<std::string, AnyReader*> m_readers;
 };
-
-    /*dds::sub::cond::ReadCondition rc(dr, dds::sub::status::DataState(), DataHandler()) ;
-    dds::core::cond::WaitSet ws;
-    ws += rc;
-    ws.dispatch();*/
 
 template <class T, class H>
 class Reader : public AnyReader {
@@ -51,12 +50,13 @@ public:
         topic::Topic< T > topic (sub.get_participant(), m_topicName, qos);
         m_reader = sub::DataReader< T >(sub.get_subscriber(), topic, topic.qos());
         m_rc = dds::sub::cond::ReadCondition(m_reader, dds::sub::status::DataState(), DataHandler());
-        m_ws += m_rc; 
+        m_ws += m_rc;
+        sub.add_reader(m_topicName, this);
     }
 
     void take(int count) {
         dds::core::Duration timeout(0,500000000);
-        std::vector< dds::sub::Sample< T > > samples;
+        dds::sub::Sample< T > sample;
         dds::core::Time t;
         do {
             // Wait until sample is received or 500msec have passed
@@ -66,11 +66,11 @@ public:
                 break; // If no sample is received within 500msec, move on to next metasample
             }
 
-            m_reader.read(samples.begin(), 1);
+            m_reader.read(&sample, 1);
 
-            t = samples[0].info().timestamp();
+            t = sample.info().timestamp();
             if (!t.nanosec()) {
-                m_reader.take(samples.begin(), 1);
+                m_reader.take(&sample, 1);
                 break; // Filter out samples with invalid values
             }
 
@@ -82,11 +82,11 @@ public:
                 } else {
                     // More metasamples than samples have been received.
                     // Read the next sample.
-                    m_reader.take(samples.begin(), 1);
+                    m_reader.take(&sample, 1);
                 }
             } else {
-                H().on_message(samples[0].data());
-                m_reader.take(samples.begin(), 1); // Remove sample from reader
+                H(sample.data());
+                m_reader.take(&sample, 1); // Remove sample from reader
             }
         } while(t.nanosec() != count);
     }
