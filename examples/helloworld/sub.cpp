@@ -7,14 +7,11 @@ struct HelloWorldHandler {
     }
 };
 
-int main(int argc, char *arv[]) {
-    dds::domain::DomainParticipant dp( 0 );
-    dds::mq::Subscriber sub( dp, "myqueue" );
-    dds::mq::Reader<Hello::World, HelloWorldHandler> reader( sub );
+int main(int argc, char *arv[]) 
+{
+    dds::mq::Reader< Hello::World, HelloWorldHandler > reader;
 
-    while(1) {
-        sub.dispatch();
-    }
+    while(1) reader.dispatch();
     
     return 0;
 }

@@ -3,9 +3,7 @@
 
 int main(int argc, char *arv[])
 {
-    dds::domain::DomainParticipant dp( 0 );
-    dds::mq::Publisher pub( dp, "myqueue" );
-    dds::mq::Writer<Hello::World> writer( pub );
+    dds::mq::Writer<Hello::World> writer;
 
     writer << Hello::World( 0, "Hello World" );
     

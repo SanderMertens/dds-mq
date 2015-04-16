@@ -1,0 +1,11 @@
+module Types {
+    struct Numbers {
+        long value;
+    };
+#pragma keylist Numbers
+
+    struct Strings {
+        string value;
+    };
+#pragma keylist Strings
+};
