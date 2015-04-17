@@ -12,11 +12,13 @@ public:
     dds::pub::Publisher get_publisher();
     int next();
     static Publisher* get_default_publisher();
+    void write_meta(std::string topicName, DDS::Duration_t duration);
 private:
     domain::DomainParticipant m_participant;
     pub::Publisher m_publisher;
     std::string m_name;
     static Publisher *s_default_publisher;
+    dds::pub::DataWriter< ::mq::order > m_orderWriter;
 };
 
 template <class T>
@@ -24,18 +26,18 @@ class Writer {
 public:
     Writer(Publisher& pub) : 
         m_writer (dds::core::null),
-        m_orderWriter (dds::core::null),
         m_topicName(type_name_to_topic(topic::topic_type_name<T>().value())),
-        m_count(0) { 
-        this->init(&pub);   
+        m_count(0),
+        m_pub(NULL) { 
+        this->init( &pub );  
     }
 
     Writer() :
         m_writer (dds::core::null),
-        m_orderWriter (dds::core::null),
         m_topicName(type_name_to_topic(topic::topic_type_name<T>().value())),
-        m_count(0) {
-        this->init(Publisher::get_default_publisher());
+        m_count(0),
+        m_pub(NULL) {
+        this->init( Publisher::get_default_publisher() );
     }
 
     void write(T sample) {
@@ -45,11 +47,11 @@ public:
         duration.sec = time.sec();
         duration.nanosec = time.nanosec();
         m_writer.write(sample, time);
-        m_orderWriter << ::mq::order(m_topicName, duration);
+        m_pub->write_meta( m_topicName, duration );
     }
 
     void operator<< (T sample) {
-        this->write(sample);
+        this->write( sample );
     }
 
 private:
@@ -60,15 +62,13 @@ private:
 
         dds::topic::Topic< T > topic (pub->get_participant(), m_topicName, qos);
         m_writer = dds::pub::DataWriter< T >(pub->get_publisher(), topic, topic.qos());
-
-        dds::topic::Topic< ::mq::order > orderTopic (pub->get_participant(), "dds_mq_order", qos);
-        m_orderWriter = dds::pub::DataWriter< ::mq::order >(pub->get_publisher(), orderTopic, orderTopic.qos());
+        m_pub = pub;
     }
 
     std::string m_topicName;
     dds::pub::DataWriter< T > m_writer;
-    dds::pub::DataWriter< ::mq::order > m_orderWriter;
     int m_count;
+    Publisher *m_pub;
 };
 
 }

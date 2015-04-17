@@ -7,8 +7,7 @@ struct HelloWorldHandler {
     }
 };
 
-int main(int argc, char *arv[]) 
-{
+int main(int argc, char *arv[]) {
     dds::mq::Reader< Hello::World, HelloWorldHandler > reader;
 
     while(1) reader.dispatch();

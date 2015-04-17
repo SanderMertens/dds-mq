@@ -65,20 +65,21 @@ public:
     }
 
     void take(int count) {
-        dds::core::Duration timeout(0,500000000);
+        dds::core::Duration timeout( 5, 0 );
         dds::sub::Sample< T > sample;
         dds::core::Time t;
 
         // Wait until sample is received or 500msec have passed
         try {
             m_ws->dispatch(timeout);
-        } catch(dds::core::TimeoutError e) {
+        } catch( dds::core::TimeoutError e ) {
+            std::cout << " > timeout on topic " << m_topicName << std::endl;
             return;
         }
 
-        m_reader.take(&sample, 1);
+        m_reader.take( &sample, 1 );
 
-        H(sample.data());
+        H( sample.data() );
     }
 private:
     void init(Subscriber* sub) {
