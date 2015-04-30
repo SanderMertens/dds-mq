@@ -35,6 +35,8 @@ private:
     static Subscriber *s_default_subscriber;
 };
 
+void dispatch();
+
 template <class T, class H>
 class Reader : public AnyReader {
 public:

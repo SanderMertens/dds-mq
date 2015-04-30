@@ -18,7 +18,7 @@ int main(int argc, char *arv[]) {
     dds::mq::Reader< Types::Strings, StringHandler > drString;
 
     while(1) {
-        drNumber.dispatch(); // Could've used any reader to dispatch
+        dds::mq::dispatch();
     }
     
     return 0;

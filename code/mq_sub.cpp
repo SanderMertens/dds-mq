@@ -71,6 +71,11 @@ void Subscriber::dispatch() {
     m_ws.dispatch();
 }
 
+void dispatch() {
+    Subscriber* sub = Subscriber::get_default_subscriber();
+    sub->dispatch();
+}
+
 }
 }
 
